@@ -1,16 +1,14 @@
 const mineflayer = require('mineflayer')
-const fs = require('fs');
 const { keep_alive } = require("./keep_alive");
 keep_alive();
-let rawdata = fs.readFileSync('config.json');
-let data = JSON.parse(rawdata);
 var pi = 3.14159;
-var host = data["ip"];
-var username = data["name"];
-var retryDelay = 3000;
+var host = "agalarlamc-jjhi.aternos.me";
+var username = "afk_bot";
+var version = "1.20.1";
+var retryDelay = 5000;
 var reconnecting = false;
 process.on('uncaughtException', function (err) {
-  console.log(`Beklenmedik hata: ${err.message}`);
+  console.log(`Hata: ${err.message}`);
   scheduleReconnect();
 });
 process.on('unhandledRejection', function (reason) {
@@ -19,6 +17,7 @@ process.on('unhandledRejection', function (reason) {
 function scheduleReconnect() {
   if (reconnecting) return;
   reconnecting = true;
+  console.log(`${retryDelay / 1000}s sonra yeniden bağlanılıyor...`);
   setTimeout(() => {
     reconnecting = false;
     createBot();
@@ -31,7 +30,12 @@ function createBot() {
   console.log(`${host} sunucusuna bağlanılıyor...`);
   var bot;
   try {
-    bot = mineflayer.createBot({ host: host, username: username, hideErrors: false });
+    bot = mineflayer.createBot({
+      host: host,
+      username: username,
+      version: version,
+      hideErrors: false
+    });
   } catch (e) {
     console.log(`Bot oluşturulamadı: ${e.message}`);
     scheduleReconnect();
