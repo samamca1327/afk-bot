@@ -7,6 +7,12 @@ var username = "afk_bot";
 var version = "1.20.1";
 var retryDelay = 5000;
 var reconnecting = false;
+var currentBot = null;
+process.on('SIGTERM', function() {
+  console.log('SIGTERM alındı, bot kapatılıyor...');
+  if (currentBot) { try { currentBot.quit(); } catch(e) {} }
+  process.exit(0);
+});
 process.on('uncaughtException', function (err) {
   console.log(`Hata: ${err.message}`);
   scheduleReconnect();
@@ -36,6 +42,7 @@ function createBot() {
       version: version,
       hideErrors: false
     });
+    currentBot = bot;
   } catch (e) {
     console.log(`Bot oluşturulamadı: ${e.message}`);
     scheduleReconnect();
@@ -71,7 +78,11 @@ function createBot() {
     try { bot.quit(); } catch(e) {}
     scheduleReconnect();
   }
-  bot.on('kicked', function (reason) { console.log(`Atıldı: ${reason}`); cleanup(); });
+  bot.on('kicked', function (reason) {
+    var msg = typeof reason === 'object' ? JSON.stringify(reason) : reason;
+    console.log(`Atıldı: ${msg}`);
+    cleanup();
+  });
   bot.on('error', function (err) { console.log(`Hata: ${err.message}`); cleanup(); });
   bot.on('end', function () { console.log("Bağlantı kesildi — yeniden bağlanılıyor..."); cleanup(); });
 }
