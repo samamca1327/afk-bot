@@ -4,7 +4,7 @@ keep_alive();
 var pi = 3.14159;
 var host = "agalarlamc-jjhi.aternos.me";
 var username = "afk_bot";
-var version = "1.20.1";
+var version = "26 1.2";
 var retryDelay = 5000;
 var reconnecting = false;
 var currentBot = null;
